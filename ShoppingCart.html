@@ -2,15 +2,302 @@
 <html>
 <head>
 <meta charset="utf-8">
+<script src="http://how2j.cn/study/js/jquery/2.0.0/jquery.min.js"></script>
+<link href="http://how2j.cn/study/css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
+<script src="http://how2j.cn/study/js/bootstrap/3.3.6/bootstrap.min.js"></script>
 <title>ShoppingCart</title>
 </head>
 	
 <body>
-	<div class="cartDiv">
+<style>
+body{
+    font-size: 12px;
+    font-family: Arial;
+}
+a{
+    color:#999;
+}
+a:hover{
+    text-decoration:none;
+    color: #C40000;
+}
+div.cartProductChangeNumberDiv a {
+    width: 14px;
+    display: inline-block;
+    text-align: center;
+    color: black;
+    text-decoration: none;
+}
+img.cartProductItemIfSelected, img.selectAllItem {
+    cursor: pointer;
+}
+tr.cartProductItemTR {
+    border: 1px solid #CCCCCC;
+}
+div.cartProductChangeNumberDiv {
+    border: solid 1px #E5E5E5;
+    width: 80px;
+}
+table.cartProductTable {
+    width: 100%;
+    font-size:12px;
+}
+span.cartProductItemOringalPrice {
+    text-decoration: line-through;
+    color: #9C9C9C;
+    display: block;
+    font-weight: bold;
+    font-size: 14px;
+}
+div.cartProductChangeNumberDiv input {
+    border: solid 1px #AAAAAA;
+    width: 42px;
+    display: inline-block;
+}
+div.cartProductChangeNumberDiv a {
+    text-decoration: none;
+}
+img.cartProductImg {
+    padding: 1px;
+    border: 1px solid #EEEEEE;
+    width: 80px;
+    height: 80px;
+}
+a.cartProductLink {
+    color: #3C3C3C;
+}
+a.cartProductLink:hover {
+    color: #C40000;
+    text-decoration: underline;
+}
+div.cartProductLinkOutDiv {
+    position: relative;
+    height: 80px;
+}
+span.cartSumNumber {
+    color: #C40000;
+    font-weight: bold;
+    font-size: 16px;
+}
+tr.cartProductItemTR td {
+    padding: 20px 20px;
+}
+span.cartSumPrice {
+    color: #C40000;
+    font-weight: bold;
+    font-size: 20px;
+}
+span.cartProductItemPromotionPrice {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: bold;
+    color: #C40000;
+}
+span.cartProductItemSmallSumPrice {
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: bold;
+    color: #C40000;
+}
+span.cartTitlePrice {
+    color: #C40000;
+    font-size: 14px;
+    font-weight: bold;
+    margin-left: 5px;
+    margin-right: 3px;
+}
+div.cartProductLinkInnerDiv {
+    position: absolute;
+    bottom: 0;
+    height: 20px;
+}
+div.cartTitle button {
+    background-color: #AAAAAA;
+    border: 1px solid #AAAAAA;
+    color: white;
+    width: 53px;
+    height: 25px;
+    border-radius: 2px;
+}
+div.cartFoot {
+    background-color: #E5E5E5;
+    line-height: 50px;
+    margin: 20px 0px;
+    color: black;
+    padding-left: 20px;
+}
+div.cartFoot button {
+    background-color: #AAAAAA;
+    border: 0px solid #AAAAAA;
+    color: white;
+    height: 100%;
+    width: 120px;
+    height: 50px;
+    font-size: 20px;
+    text-align: center;
+}
+table.cartProductTable th {
+    font-weight: normal;
+    color: #3C3C3C;
+    padding: 20px 20px;
+}
+table.cartProductTable th.selectAndImage{
+    width:140px;
+}
+table.cartProductTable th.operation{
+    width:30px;
+}
+div.cartDiv {
+    max-width: 1013px;
+    margin: 10px auto;
+    color: black;
+}
+	
+</style>
+<script>
+  $(function(){
+	  $("img.cartProductItemIfSelected").click(function(){
+        var selectit = $(this).attr("selectit");
+        if("selectit"==selectit){
+            $(this).attr("src","http://how2j.cn/tmall/img/site/cartNotSelected.png");
+            $(this).attr("selectit","false")
+            $(this).parents("tr.cartProductItemTR").css("background-color","#fff");
+			syncSelect();
+			syncCreateOrderButton();
+			removePrice();
+        }
+        else{
+            $(this).attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
+            $(this).attr("selectit","selectit")
+            $(this).parents("tr.cartProductItemTR").css("background-color","#FFF8E1");
+			syncSelect();
+			syncCreateOrderButton();
+			getPrice(); 
+        }
+    });
+	$("img.selectAllItem").click(function(){
+		var selectit = $(this).attr("selectit");
+		 if("selectit"==selectit){
+             $("img.selectAllItem").attr("src","http://how2j.cn/tmall/img/site/cartNotSelected.png");
+             $("img.selectAllItem").attr("selectit","false")
+			 $("img.cartProductItemIfSelected").attr("src","http://how2j.cn/tmall/img/site/cartNotSelected.png");
+			 $("img.cartProductItemIfSelected").attr("selectit","false");
+			 $("img.cartProductItemIfSelected").parents("tr.cartProductItemTR").css("background-color","#fff");
+			 removePrice();
+            
+        }
+        else{
+            $("img.selectAllItem").attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
+            $("img.selectAllItem").attr("selectit","selectit");
+            $("img.cartProductItemIfSelected").attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
+			$("img.cartProductItemIfSelected").attr("selectit","selectit");
+			$("img.cartProductItemIfSelected").parents("tr.cartProductItemTR").css("background-color","#FFF8E1");
+			getPrice();
+			
+        }
+	});
+	$(".orderItemNumberSetting").keyup(function(){
+        var pid=$(this).attr("pid");
+        var stock= $("span.orderItemStock[pid="+pid+"]").text();
+        var price= $("span.orderItemPromotePrice[pid="+pid+"]").text();
+        var num= $(".orderItemNumberSetting[pid="+pid+"]").val();
+        num = parseInt(num);
+        if(isNaN(num))
+			{num= 1;
+				$(".orderItemNumberSetting[pid="+pid+"]").val(num);
+            }
+        if(num<=0)
+            num = 1;
+        if(num>stock)
+            num = stock;
+		price=convertNumber(price)*num;
+		price=parseFloat(price).toFixed(2);
+		$(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥"+price);
+		getPrice(num);
+    });
+  });
+ 
+function syncSelect(){
+    var selectAll = true;
+    $(".cartProductItemIfSelected").each(function(){
+        if("false"==$(this).attr("selectit")){
+            selectAll = false;
+        }
+    });
+    if(selectAll){
+		$("img.selectAllItem").attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
+	}
+
+    else{
+		$("img.selectAllItem").attr("src","http://how2j.cn/tmall/img/site/cartNotSelected.png");
+	}
+			
+}
+
+function syncCreateOrderButton(){
+    var selectAny = false;
+    $(".cartProductItemIfSelected").each(function(){
+		
+        if("selectit"==$(this).attr("selectit")){
+            selectAny = true;
+        }
+    });
+    if(selectAny){
+        $("button.createOrderButton").css("background-color","#C40000");
+        $("button.createOrderButton").removeAttr("disabled");
+    }
+    else{
+        $("button.createOrderButton").css("background-color","#AAAAAA");
+        $("button.createOrderButton").attr("disabled","disabled");      
+    }
+}
+function getPrice(){
+	var price;
+	var oiid;
+	var sumPrice=0;
+    var sumNum=0;
+	$(".cartProductItemIfSelected").each(function(){
+		if("selectit"==$(this).attr("selectit")){
+			oiid=$(this).attr("oiid");
+			pid=$(".orderItemNumberSetting[oiid="+oiid+"]").attr("pid");
+			num=$(".orderItemNumberSetting[pid="+pid+"]").val();
+			sumNum=parseInt(sumNum)+parseInt(num);
+			if(isNaN(sumNum)){
+				sumNum=1;
+			}
+	   		price=$(".cartProductItemSmallSumPrice[oiid="+oiid+"]").text();
+			price=convertNumber(price);
+			sumPrice=parseFloat(sumPrice)+parseFloat(price);
+			sumPrice=parseFloat(sumPrice).toFixed(2);
+			creatSumPrice(sumPrice,sumNum);
+		}
+	  })
+ }								   
+
+function convertNumber(price){
+	price=price.replace(/\￥|\,/g,'');
+	price=parseFloat(price).toFixed(2);
+	return price;
+}
+
+function creatSumPrice(sumPrice,sumMumber){
+	document.getElementById("cartSumPrice").innerHTML="￥"+sumPrice;
+	document.getElementById("cartTitlePrice").innerHTML="￥"+sumPrice;
+	document.getElementById("cartSumNumber").innerHTML=sumMumber;
+	
+}
+function removePrice(){
+	document.getElementById("cartSumPrice").innerHTML="￥0.00";
+	document.getElementById("cartTitlePrice").innerHTML="￥0.00";
+	document.getElementById("cartSumNumber").innerHTML="0";
+}
+</script>
+
+<div class="cartDiv">
     <div class="cartTitle pull-right">
         <span>已选商品  (不含运费)</span>
-        <span class="cartTitlePrice">￥0.00</span>
-        <button class="createOrderButton" style="background-color: rgb(170, 170, 170);">结 算</button>
+        <span id="cartTitlePrice" class="cartTitlePrice">￥0.00</span>
+        <button class="createOrderButton" style="background-color: rgb(170, 170, 170);" disabled="disabled">结 算</button>
     </div>
     <div class="cartProductList">
         <table class="cartProductTable">
@@ -28,7 +315,7 @@
                 </tr>
             </thead>
             <tbody>
-                    <tr class="cartProductItemTR" oiid="936" style="background-color: rgb(255, 255, 255);">
+                    <tr class="cartProductItemTR" oiid="936">
                         <td>
                             <img src="http://how2j.cn/tmall/img/site/cartNotSelected.png" class="cartProductItemIfSelected" oiid="936" selectit="false">
                             <a href="#nowhere" style="display:none"><img src="http://how2j.cn/tmall/img/site/cartSelected.png"></a>
@@ -58,7 +345,7 @@
                             </div>                    
                          </td>
                         <td>
-                            <span pid="365" oiid="936" class="cartProductItemSmallSumPrice">
+                            <span pid="365" oiid="936" id="cartProductItemSmallSumPrice" class="cartProductItemSmallSumPrice">
                             ￥5,306.00
                             </span>
                         </td>
@@ -96,7 +383,7 @@
                             </div>                    
                          </td>
                         <td>
-                            <span pid="809" oiid="935" class="cartProductItemSmallSumPrice">
+                            <span pid="809" oiid="935" id="cartProductItemSmallSumPrice" class="cartProductItemSmallSumPrice">
                             ￥152.75
                             </span>
                         </td>
@@ -107,6 +394,18 @@
             </tbody>
         </table>
     </div>
+    <div class="cartFoot">
+        <img src="http://how2j.cn/tmall/img/site/cartNotSelected.png" class="selectAllItem" selectit="false">
+        <span>全选</span>
+<!--         <a href="#">删除</a> -->
+        <div class="pull-right">
+            <span>已选商品 <span id="cartSumNumber" class="cartSumNumber">0</span> 件</span>
+            <span>合计 (不含运费): </span> 
+            <span id="cartSumPrice" class="cartSumPrice">￥0.00</span>
+            <button class="createOrderButton" style="background-color: rgb(170, 170, 170);" disabled="disabled">结  算</button>
+        </div>
+    </div>
 </div>
+
 </body>
 </html>
