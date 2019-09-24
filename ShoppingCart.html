@@ -189,13 +189,14 @@ div.cartDiv {
         else{
             $("img.selectAllItem").attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
             $("img.selectAllItem").attr("selectit","selectit");
-            $("img.cartProductItemIfSelected").attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
+            $("img.cartProductItemIf5Selected").attr("src","http://how2j.cn/tmall/img/site/cartSelected.png");
 			$("img.cartProductItemIfSelected").attr("selectit","selectit");
 			$("img.cartProductItemIfSelected").parents("tr.cartProductItemTR").css("background-color","#FFF8E1");
 			getPrice();
 			
         }
 	});
+	  //键盘输入数量
 	$(".orderItemNumberSetting").keyup(function(){
         var pid=$(this).attr("pid");
         var stock= $("span.orderItemStock[pid="+pid+"]").text();
@@ -204,17 +205,43 @@ div.cartDiv {
         num = parseInt(num);
         if(isNaN(num))
 			{num= 1;
-				$(".orderItemNumberSetting[pid="+pid+"]").val(num);
             }
         if(num<=0)
             num = 1;
         if(num>stock)
             num = stock;
+		$(".orderItemNumberSetting[pid="+pid+"]").val(num);
+		//改变金额
 		price=convertNumber(price)*num;
 		price=parseFloat(price).toFixed(2);
 		$(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥"+price);
-		getPrice(num);
+		getPrice();
     });
+	$(".numberPlus").click(function(){
+		var pid=$(this).attr("pid");
+        var stock= $("span.orderItemStock[pid="+pid+"]").text();
+        var price= $("span.orderItemPromotePrice[pid="+pid+"]").text();
+        var num= $(".orderItemNumberSetting[pid="+pid+"]").val();
+		++num;
+		$(".orderItemNumberSetting[pid="+pid+"]").val(num);
+		price=convertNumber(price)*num;
+		price=parseFloat(price).toFixed(2);
+		$(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥"+price);
+		getPrice();
+	});
+	 $(".numberMinus").click(function(){
+		var pid=$(this).attr("pid");
+        var stock= $("span.orderItemStock[pid="+pid+"]").text();
+        var price= $("span.orderItemPromotePrice[pid="+pid+"]").text();
+        var num= $(".orderItemNumberSetting[pid="+pid+"]").val();
+		--num;
+		 if(num==0)num=1;
+		$(".orderItemNumberSetting[pid="+pid+"]").val(num);
+		price=convertNumber(price)*num;
+		price=parseFloat(price).toFixed(2);
+		$(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥"+price);
+		getPrice();
+	 })
   });
  
 function syncSelect(){
