@@ -231,6 +231,7 @@
 </style>
 <script>
   $(function(){
+	  //点击产品选择框
 	  $("img.cartProductItemIfSelected").click(function(){
         var selectit = $(this).attr("selectit");
         if("selectit"==selectit){
@@ -250,6 +251,7 @@
 			getPrice(); 
         }
     });
+	  //点击全选选择框
 	$("img.selectAllItem").click(function(){
 		var selectit = $(this).attr("selectit");
 		 if("selectit"==selectit){
@@ -292,6 +294,7 @@
 		$(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥"+price);
 		getPrice();
     });
+	  //点击+增加数量
 	$(".numberPlus").click(function(){
 		var pid=$(this).attr("pid");
         var stock= $("span.orderItemStock[pid="+pid+"]").text();
@@ -304,6 +307,7 @@
 		$(".cartProductItemSmallSumPrice[pid="+pid+"]").html("￥"+price);
 		getPrice();
 	});
+	  //点击-减少数量 
 	 $(".numberMinus").click(function(){
 		var pid=$(this).attr("pid");
         var stock= $("span.orderItemStock[pid="+pid+"]").text();
@@ -318,7 +322,7 @@
 		getPrice();
 	 })
   });
- 
+ //全选函数
 function syncSelect(){
     var selectAll = true;
     $(".cartProductItemIfSelected").each(function(){
@@ -353,6 +357,7 @@ function syncCreateOrderButton(){
         $("button.createOrderButton").attr("disabled","disabled");      
     }
 }
+	//获取产品金额
 function getPrice(){
 	var price;
 	var oiid;
@@ -381,13 +386,14 @@ function convertNumber(price){
 	price=parseFloat(price).toFixed(2);
 	return price;
 }
-
+//将计算后的金额数转化成页面展示的价格，也就是增加价格符号
 function creatSumPrice(sumPrice,sumMumber){
 	document.getElementById("cartSumPrice").innerHTML="￥"+sumPrice;
 	document.getElementById("cartTitlePrice").innerHTML="￥"+sumPrice;
 	document.getElementById("cartSumNumber").innerHTML=sumMumber;
 	
 }
+//初始化价格
 function removePrice(){
 	document.getElementById("cartSumPrice").innerHTML="￥0.00";
 	document.getElementById("cartTitlePrice").innerHTML="￥0.00";
@@ -396,6 +402,7 @@ function removePrice(){
 </script>
 
 <div class="cartDiv">
+<!--	置顶导航-->
 		<nav  class="top">
 		<a href="#nowhere">
 			<span class="glyphicon glyphicon-home redColor"></span>

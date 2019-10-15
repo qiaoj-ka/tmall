@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+	<script src="https://use.fontawesome.com/30d3ba9e94.js"></script>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="http://how2j.cn/study/js/jquery/2.0.0/jquery.min.js"></script>
+</head>
+<style>
+	div.degisterDiv{
+		max-width: 1200px;
+		margin: 0px auto;
+	}
+	div.top img{
+		float: left;
+		width: 1200px;
+		margin-bottom: 50px;
+	}
+	div.statement{
+		border: 1px solid #6E6E6E;
+		border-top: 3px solid #C40000;
+		padding: 50px;
+		margin-left: 200px;
+		position: absolute;
+		top: 150px;
+		width: 800px;
+	}
+	div.title{
+		color:#444444;
+		font-size: 20px;
+		margin-bottom: 10px;
+	}
+	div.statement div{
+		margin-top: 10px;
+	}
+	span.Thickening{
+		font-weight:bold;
+		font-size: 16px;
+	}
+	span.comment{
+		color: #595959;
+	}
+	div.degisterDiv a{
+		font-size: 20px;
+		color: #FF1515;
+		text-decoration: none;
+	}
+	div.degisterDiv a:hover{
+		text-decoration: underline;
+	}
+	div.degisterDiv button{
+		height: 50px;
+		width: 200px;
+		margin-left: 300px;
+		background-color:#FF1515;
+		color: #FFFFFF;
+		font-size: 20px;
+	}
+	div.registerDiv{
+		margin: 10px 20px;
+		text-align: center;
+	}
+	table.registerTable{
+		color: #3C3C3C;
+		font-size: 16px;
+		table-layout: fixed;
+		margin-top: 50px;
+	}
+	table.registerTable td{
+		padding: 10px 30px;
+	}
+	table.registerTable input{
+		border: 1px solid #DEDEDE;
+		width: 213px;
+		height: 36px;
+		font-size: 14px;
+	}
+	table.registerTable button{
+		width: 170px;
+		height: 36px;
+		border-radius: 2px;
+		color: white;
+		background-color: #FF1515;
+		border-width: 0px;
+	}
+	table.registerTable button.getotp{
+		width: 100px;
+		height: 36px;
+		border-radius: 2px;
+		color: white;
+		background-color:#FF1515;
+		border-width: 0px;
+	}
+	td.registerTip{
+		font-weight: bold;
+	}
+	td.registerTableLeftTD{
+		width: 300px;
+		text-align: right;
+	}
+	td.registerTableRightTD{
+		width: 300px;
+		text-align: left;
+	}
+	td.registerButtonTD{
+		text-align: center;
+	}
+</style>
+<script>
+	$(function(){
+	  $("button.agree").click(function(){
+		$("div.statement").hide();
+		$("table.registerTable").show();
+	});
+		$(".getotp").click(function(){
+			var telphone=$("#telephone").val();
+					if(telephone==null||telephone==""){
+						alert("手机号不能为空");
+						return false;
+					}
+						 $.ajax({
+			  		type:"POST",
+					contentType:"application/x-www-form-urlencoded",
+					url:"http://localhost:8093/user/getotp",
+					data:{
+							"telphone":$("#telephone").val(),
+							},
+				 	xhrFields:{withCredentials:true},
+			        success:function(data){
+						if(data.status=="success"){
+							alert("otp已经发送到您的手机上了，请注意查收")
+//							this.location.href="https://blog.csdn.net/sdta25196/article/details/78799338"
+						}else{
+							alert("otp发送失败，原因是"+data.data.errMsg);
+						}
+					},
+					error:function(data){
+						alert("otp发送失败，原因为"+data.responseText);
+					}
+							
+			});	
+		})
+		$(".registerButtonTD").click(function(){
+					var name=$("#name").val();
+					var telephone=$("#telephone").val();
+					var otpCode=$("#getotp").val();
+					var password=$("#password").val();
+					var repeatpassword=$("#repeatpassword").val();
+					if(name==null||name==""){
+						alert("登录名不能为空");
+						return false;
+					}
+					if(telephone==null||telephone==""){
+						alert("手机号不能为空");
+						return false;
+					}
+					if(otpCode==null||otpCode==""){
+						alert("验证码不能为空");
+						return false;
+					}
+				    if(password==null||password==""){
+						alert("密码不能为空");
+						return false;
+					}
+					if(repeatpassword==null||password==""){
+						alert("密码不能为空");
+						return false;
+					}
+					if(repeatpassword!=password){
+						alert("前后密码不一致");
+						return false;
+					}
+			$.ajax({
+			  		type:"POST",
+					contentType:"application/x-www-form-urlencoded",
+					url:"http://localhost:8093/user/register",
+					data:{
+							"telphone":$("#telephone").val(),
+							"otpCode":otpCode,
+							"name":name,
+							"password":password
+							},
+				 	xhrFields:{withCredentials:true},
+			        success:function(data){
+						if(data.status=="success"){
+							alert("注册成功")
+							location.href="TmallLogin.html"
+						}else{
+							alert("注册失败，原因是"+data.data.errMsg);
+						}
+					},
+					error:function(data){
+						alert("注册失败，原因为"+data.responseText);
+					}
+							
+			});	
+				return false;
+	})
+		 });
+
+</script>
+<body>
+<div class="degisterDiv">
+	<div class="top">
+		<img src="https://img-blog.csdnimg.cn/20191012103117997.png" alt="">
+	</div>
+	<div class="statement">
+		<div class="title">注册协议</div>
+		<span><span class="Thickening">【审慎阅读】</span><span class="comment">您在申请注册流程中点击同意前，应当认真阅读以下协议。</span><u>请您务必审慎阅读、充分理解协议中相关条款内容，其中包括：</u></span>
+		<div class="tip"><span class="num">1、</span><u>与您约定免除或限制责任的条款；</u></div>
+		<div class="tip"><span class="num">2、</span><u>与您约定法律适用和管辖的条款；</u></div>
+		<div class="tip"><span class="num">3、</span><u>其他以粗体下划线标识的重要条款。</u></div>
+		<div><span class="comment">如您对协议有任何疑问，可向平台客服咨询。</span></div>
+		<div><span class="Thickening">【特别提示】</span><span class="comment">当您按照注册页面提示填写信息、阅读并同意协议且完成全部注册程序后，即表示您已充分阅读、理解并接受协议的全部内容。如您因平台服务与淘宝发生争议的，适用《淘宝平台服务协议》处理。如您在使用平台服务过程中与其他用户发生争议的，依您与其他用户达成的协议处理。</span></div>
+		<div><u>阅读协议的过程中，如果您不同意相关协议或其中任何条款约定，您应立即停止注册程序。</u></div>
+		<div><a href="#nowhere">淘宝平台服务协议</a></div>
+		<div><a href="#nowhere">隐私权政策</a></div>
+		<div><a href="#nowhere">法律声明</a></div>
+		<div><a href="#nowhere">支付宝及客户端服务协议</a></div>
+		<div>
+		</div>
+		<button class="agree">同意协议</button>
+	</div>
+</div>
+	    <table align="center" class="registerTable" style="display:none">
+        <tbody><tr>
+            <td class="registerTip registerTableLeftTD">设置会员名</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td class="registerTableLeftTD">登陆名</td>
+            <td class="registerTableRightTD"><input placeholder="会员名一旦设置成功，无法修改" name="name" id="name"> </td>
+        </tr>
+		<tr>
+			<td class="registerTableLeftTD">手机号</td>
+			 <td class="registerTableRightTD"><input placeholder="填入您的手机号手机号" name="telephone" id="telephone"> </td>
+		</tr>
+		<tr>
+			<td class="registerTableLeftTD"><button class="getotp">获取验证码</button></td>
+            <td class="registerTableRightTD"><input placeholder="输入获取验证码" name="getotp" id="getotp"> </td>
+        </tr>  
+        <tr>
+            <td class="registerTip registerTableLeftTD">设置登陆密码</td>
+            <td class="registerTableRightTD">登陆时验证，保护账号信息</td>
+        </tr>     
+        <tr>
+            <td class="registerTableLeftTD">登陆密码</td>
+            <td class="registerTableRightTD"><input type="password" placeholder="设置你的登陆密码" name="password" id="password"> </td>
+        </tr>
+        <tr>
+            <td class="registerTableLeftTD">密码确认</td>
+            <td class="registerTableRightTD"><input type="password" placeholder="请再次输入你的密码" id="repeatpassword"> </td>
+        </tr>
+        <tr>
+            <td class="registerButtonTD" colspan="2">
+					<button>提   交</button>
+            </td>
+        </tr>             
+    </tbody></table>
+</body>
+</html>
