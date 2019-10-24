@@ -2,6 +2,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script src="http://how2j.cn/study/js/jquery/2.0.0/jquery.min.js"></script>
 <link href="http://how2j.cn/study/css/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="HomePage.css">
 <script src="http://how2j.cn/study/js/bootstrap/3.3.6/bootstrap.min.js"></script>
 </head>
 
@@ -16,6 +17,21 @@ $(function(){
 		$("div.productReviewDiv").hide();
 		$("div.productDetailDiv").show();		
 	});
+	$(".buyButton").click(function(){
+		$.ajax({
+			  		type:"POST",
+					contentType:"application/x-www-form-urlencoded",
+					url:"http://localhost:8093/order/judge",
+				 	xhrFields:{withCredentials:true},
+			        success:function(){
+						location.href="Payfor.html?money=￥"+g_itemVO.price;
+					},
+					error:function(data){
+						alert("请登录");
+					}
+							
+			});
+	})
 })
 </script>
 
@@ -358,16 +374,87 @@ a:hover{
     font-weight: bold;
 }
 </style>
+<script>
+	//获取传入的参数
+	function getParam(paramName) {
+    paramValue = "", isFound = !1;
+    if (this.location.search.indexOf("?") == 0 && this.location.search.indexOf("=") > 1) {
+        arrSource = unescape(this.location.search).substring(1, this.location.search.length).split("&"), i = 0;
+        while (i < arrSource.length && !isFound) arrSource[i].indexOf("=") > 0 && arrSource[i].split("=")[0].toLowerCase() == paramName.toLowerCase() && (paramValue = arrSource[i].split("=")[1], isFound = !0), i++
+    }
+    return paramValue == "" && (paramValue = null), paramValue
+}
+	
+	$(function(){
+		$.ajax({
+				type:"GET",
+				url:"http://localhost:8093/item/getItem",
+				data:{
+					"id":getParam("id"),
+				},
+				xhrFields:{withCredentials:true},
+				success:function(data){
+					if(data.status == "success"){
+                        g_itemVO = data.data;
+						reloadDom();
+					}else{
+						alert("获取信息失败，原因为"+data.data.errMsg)
+					}
+				},
+				error:function(data){
+					alert("获取信息失败，原因为"+data.responseText);
+				}
+			});
+		$(".addCartButton").click(function(){
+			location.href = "ShoppingCart.html?id="+getParam("id");
+		})
+	})
+	function reloadDom(){
+    	$(".productTitle").text(g_itemVO.description);
+    	$(".description").text(g_itemVO.description);
+    	$(".promotionPrice").text(g_itemVO.price);
+    	$(".bigImg").attr("src",g_itemVO.imgUrl);
+    	$(".boldWord").text(g_itemVO.sales);
+		if(g_itemVO.image1==null){
+			$(".smallImage").attr("src",g_itemVO.imgUrl);
+		}else{
+		$(".smallImage[num=1]").attr("src",g_itemVO.image1);
+		$(".smallImage[num=2]").attr("src",g_itemVO.image2);
+		$(".smallImage[num=3]").attr("src",g_itemVO.image3);
+		$(".smallImage[num=4]").attr("src",g_itemVO.image1);
+		$(".smallImage[num=5]").attr("src",g_itemVO.image2);
+		$(".originalPrice").text(g_itemVO.originPrice);
+		$(".productDetailImagesPart img").attr("src",g_itemVO.image4);
+		}
+    }
+</script>
+	<nav  class="top">
+		<a href="HomePage.html">
+			<span class="glyphicon glyphicon-home redColor"></span>
+			天猫首页
+		</a>
+		
+		<span>瞄，欢迎来天猫</span>
+		 	<a href="TmallLogin.html">登录</a>
+			<a href="#nowhere">退出账号</a>
+		
+		<span class="pull-right">
+			<a href="MyOrder.html">我的订单</a>
+			<a href="ShoppingCart.html">
+			<span class=" glyphicon glyphicon-shopping-cart redColor" ></span>
+            购物车<strong>2</strong>件</a>    
+		</span>
+	</nav>
 <div class="goodsDIV">
 	<div class="imgAndInfo">
 	<div class="imgInimgAndInfo">
-		<img  width="100px" class="bigImg" src="http://how2j.cn/tmall/img/productSingle/8619.jpg">
+		<img  width="100px" class="bigImg" src="http">
 		<div class="smallImageDiv">
-				<img  width="56px" class="smallImage" src="http://how2j.cn/tmall/img/productSingle_small/8620.jpg">
-				<img  width="56px" class="smallImage" src="http://how2j.cn/tmall/img/productSingle_small/8619.jpg">
-				<img  width="56px" class="smallImage" src="http://how2j.cn/tmall/img/productSingle_small/8618.jpg">
-				<img  width="56px" class="smallImage" src="http://how2j.cn/tmall/img/productSingle_small/8617.jpg">
-				<img  width="56px" class="smallImage" src="http://how2j.cn/tmall/img/productSingle_small/8616.jpg">
+				<img  width="56px" class="smallImage" num="1" src="http">
+				<img  width="56px" class="smallImage" num="2" src="http">
+				<img  width="56px" class="smallImage" num="3" src="http">
+				<img  width="56px" class="smallImage" num="4" src="http">
+				<img  width="56px" class="smallImage" num="5" src="http">
 		</div>
 	</div>
 	<div style="clear:both"></div>

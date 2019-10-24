@@ -96,7 +96,46 @@ div.license span.blod{
 	font-weight: bold;
 }	
 </style>
-
+<script>
+	$(function(){
+		$("#loginButton").click(function(){
+			var telephone=$("#telephone").val();
+			var password=$("#password").val();
+			if(telephone==null||telephone==""){
+				alert("手机号不能为空");
+				return false;
+			}
+			if(password==null||password==""){
+				alert("密码不能为空");
+				return false;
+			}
+			$.ajax({
+				type:"POST",
+					contentType:"application/x-www-form-urlencoded",
+					url:"http://localhost:8093/user/login",
+					data:{
+							"telphone":$("#telephone").val(),
+							"password":password
+							},
+				 	xhrFields:{withCredentials:true},
+			        success:function(data){
+						if(data.status=="success"){
+							alert("登陆成功")
+							location.href="HomePage.html"
+						}else{
+							alert("登陆失败，原因是"+data.data.errMsg);
+						}
+					},
+					error:function(data){
+						alert("登陆失败，原因为"+data.responseText);
+					}
+			})
+		});
+		$(".pull-right").click(function(){
+			location.href="Register.html";
+		})
+	})
+</script>
 <div id="loginDiv">
 	<div class="simpleLogo">
 		<img src="http://how2j.cn/tmall/img/site/simpleLogo.png">
@@ -108,7 +147,7 @@ div.license span.blod{
 				<span class="loginInputIcon ">
 					<span class=" glyphicon glyphicon-user"></span>
 				</span>
-				<input type="text" placeholder="手机" name="name" id="name">			
+				<input type="text" placeholder="手机" name="telephone" id="telephone">			
 			</div>
 			<div class="loginInput ">
 				<span class="loginInputIcon ">
@@ -121,15 +160,10 @@ div.license span.blod{
 				<a class="pull-right" href="#nowhere">免费注册</a> 
 			</div>
 			<div style="margin-top:20px">
-				<button type="button" class="btn btn-block redButton">登录</button>
+				<button type="button" class="btn btn-block redButton" id="loginButton">登录</button>
 			</div>
 		</div>	
 </div>
-<script>
-	$(function(){
-		$("")
-	})
-</script>
 <div class="footer" id="footer">
 	<div class="copyright" id="copyright">
 		<div class="white_link">
